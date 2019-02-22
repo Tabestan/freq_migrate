@@ -1,0 +1,16 @@
+<?php
+
+/**
+ * @file
+ * Install file for freq_migrate module.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function freq_migrate_install() {
+    // Set the migrate class to ours.
+    variable_set('wordpress_migrate_blog_class', 'CbsMigrateWordPressBlog');
+}
+
+//TODO: add uninstall() to remove migration settings

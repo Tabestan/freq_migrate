@@ -1,0 +1,63 @@
+diff --git a/wordpress_item.inc b/wordpress_item.inc
+index dd56df5..8efa76d 100644
+--- a/wordpress_item.inc
++++ b/wordpress_item.inc
+@@ -264,30 +264,34 @@ abstract class WordPressItemMigration extends WordPressMigration {
+       // (WordPress machine name) is used for matching on sourceMigration - we
+       // pull the actual tag/category separately in case we need to handle it
+       // in prepare().
+-      if ($this->tagField) {
+-        $this->addFieldMapping($this->tagField, 'tag')
+-          ->sourceMigration($arguments['group_name'] . $arguments['tag_migration'])
+-          ->xpath('category[@domain="post_tag"]/@nicename');
+-        $this->addFieldMapping(NULL, 'tag_value')
+-          ->xpath('category[@domain="post_tag"]');
+-        $this->addFieldMapping($this->tagField . ':source_type')
+-             ->defaultValue('tid');
+-      }
+-      else {
+-        $this->addFieldMapping(NULL, 'tag');
+-      }
+-      if ($this->categoryField) {
+-        $this->addFieldMapping($this->categoryField, 'category')
+-          ->sourceMigration($arguments['group_name'] . $arguments['category_migration'])
+-          ->xpath('category[@domain="category"]/@nicename');
+-        $this->addFieldMapping(NULL, 'category_value')
+-          ->xpath('category[@domain="category"]');
+-        $this->addFieldMapping($this->categoryField . ':source_type')
+-             ->defaultValue('tid');
+-      }
+-      else {
+-        $this->addFieldMapping(NULL, 'category');
+-      }
++      if(isset($arguments['tag_migration'])) {  
++            if ($this->tagField) {
++                $this->addFieldMapping($this->tagField, 'tag')
++                    ->sourceMigration($arguments['group_name'] . $arguments['tag_migration'])
++                    ->xpath('category[@domain="post_tag"]/@nicename');
++                $this->addFieldMapping(NULL, 'tag_value')
++                    ->xpath('category[@domain="post_tag"]');
++                $this->addFieldMapping($this->tagField . ':source_type')
++                    ->defaultValue('tid');
++            }
++            else {
++                $this->addFieldMapping(NULL, 'tag');
++            }
++        }
++        if(isset($arguments['category_migration'])) {
++            if ($this->categoryField) {
++                $this->addFieldMapping($this->categoryField, 'category')
++                    ->sourceMigration($arguments['group_name'] . $arguments['category_migration'])
++                    ->xpath('category[@domain="category"]/@nicename');
++                $this->addFieldMapping(NULL, 'category_value')
++                    ->xpath('category[@domain="category"]');
++                $this->addFieldMapping($this->categoryField . ':source_type')
++                    ->defaultValue('tid');
++            }
++            else {
++                $this->addFieldMapping(NULL, 'category');
++            }
++        }
+     }
+ 
+     // If podcast migration is requested, add the mapping.

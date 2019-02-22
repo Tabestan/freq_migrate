@@ -1,0 +1,309 @@
+<?php
+/**
+ * @file
+ */
+
+/**
+ * Implements hook_help().
+ */
+function freq_migrate_help($path, $arg) {
+    switch ($path) {
+        case 'admin/help#freq_migrate':
+
+            $filepath = dirname(__FILE__) . '/README.md';
+            if (file_exists($filepath)) {
+                $readme = file_get_contents($filepath);
+            }
+            if (!isset($readme)) {
+                return NULL;
+            }
+
+            $output = '<pre>' . $readme . '</pre>';
+
+            return $output;
+    }
+}
+
+/**
+ * Implements hook_migrate_api()
+ */
+function freq_migrate_migrate_api() {
+    $api = array(
+        'api' => 2,
+    );
+    return $api;
+}
+
+class CbsMigrateWordPressBlog extends WordPressBlog {
+
+    /**
+     * Register migration classes.
+     *
+     * @return array
+     *   An array of migration classes.
+     */
+    public function migrationClasses() {
+        $classes = parent::migrationClasses();
+        $classes['WordPressBlogEntry']      = 'CbsMigrateWordPressBlogEntry';
+
+        return $classes;
+    }
+
+}
+
+
+/**
+ * Class CBSWordpressBlogEntry.
+ *
+ * Extension of WordPressBlogEntry to run additional content processing.
+ */
+class CbsMigrateWordPressBlogEntry extends WordPressBlogEntry {
+
+    /**
+     * {@inheritdoc}
+     */
+    public function __construct(array $arguments = []) {
+        parent::__construct($arguments);
+
+        // Unmapped destination fields
+        // CBS Unmapped destination fields
+        $this->addUnmigratedDestinations(array(
+            'field_categories:create_term',
+            'field_categories:ignore_case',
+            'field_cover_image',
+            'field_blog_legacy_id',
+            'field_cover_image:file_class',
+            'field_cover_image:preserve_files',
+            'field_cover_image:destination_dir',
+            'field_cover_image:destination_file',
+            'field_cover_image:file_replace',
+            'field_cover_image:source_dir',
+            'field_cover_image:urlencode',
+            'field_cover_image:alt',
+            'field_cover_image:title',
+            'field_embed_audio',
+            'field_embed_audio:file_class',
+            'field_embed_audio:preserve_files',
+            'field_embed_audio:destination_dir',
+            'field_embed_audio:destination_file',
+            'field_embed_audio:file_replace',
+            'field_embed_audio:source_dir',
+            'field_embed_audio:urlencode',
+            'field_embed_audio:description',
+            'field_embed_audio:display',
+            'field_embed_video',
+            'field_embed_video:brightcove_id',
+            'field_embed_video:player',
+            'field_share',
+            'field_show_attribute',
+            'field_show_attribute:source_type',
+            'field_show_attribute:create_entity',
+            'field_show_attribute:ignore_case',
+            'field_showcase',
+            'field_showcase:revision_id',
+            'field_subtitle',
+            'field_twitter',
+            'field_twitter:message',
+            'field_twitter:account',
+            'opencalais_socialtags_tags:create_term',
+            'opencalais_socialtags_tags:ignore_case',
+            'field_markets',
+            'field_markets:source_type',
+            'field_markets:create_term',
+            'field_markets:ignore_case',
+            'field_station_format',
+            'field_station_format:source_type',
+            'field_station_format:create_term',
+            'field_station_format:ignore_case',
+            'field_stations',
+            'field_stations:source_type',
+            'field_stations:create_term',
+            'field_stations:ignore_case',
+            'field_curated_news',
+            'field_editable_by_admin_only',
+            'field_editorial_feeds',
+            'field_editorial_feeds:source_type',
+            'field_editorial_feeds:create_term',
+            'field_editorial_feeds:ignore_case',
+            'metatag_station-call-letters',
+            'metatag_title',
+            'metatag_description',
+            'metatag_abstract',
+            'metatag_keywords',
+            'metatag_robots',
+            'metatag_news_keywords',
+            'metatag_standout',
+            'metatag_rating',
+            'metatag_referrer',
+            'metatag_generator',
+            'metatag_rights',
+            'metatag_image_src',
+            'metatag_canonical',
+            'metatag_shortlink',
+            'metatag_original-source',
+            'metatag_prev',
+            'metatag_next',
+            'metatag_content-language',
+            'metatag_geo.position',
+            'metatag_geo.placename',
+            'metatag_geo.region',
+            'metatag_icbm',
+            'metatag_refresh',
+            'metatag_revisit-after',
+            'metatag_pragma',
+            'metatag_cache-control',
+            'metatag_expires',
+            'metatag_fb:admins',
+            'metatag_fb:app_id',
+            'metatag_fb:pages',
+            'metatag_shortcut icon',
+            'metatag_mask-icon',
+            'metatag_icon_16x16',
+            'metatag_icon_32x32',
+            'metatag_icon_96x96',
+            'metatag_icon_192x192',
+            'metatag_apple-touch-icon',
+            'metatag_apple-touch-icon_72x72',
+            'metatag_apple-touch-icon_76x76',
+            'metatag_apple-touch-icon_114x114',
+            'metatag_apple-touch-icon_120x120',
+            'metatag_apple-touch-icon_144x144',
+            'metatag_apple-touch-icon_152x152',
+            'metatag_apple-touch-icon_180x180',
+            'metatag_apple-touch-icon-precomposed',
+            'metatag_apple-touch-icon-precomposed_72x72',
+            'metatag_apple-touch-icon-precomposed_76x76',
+            'metatag_apple-touch-icon-precomposed_114x114',
+            'metatag_apple-touch-icon-precomposed_120x120',
+            'metatag_apple-touch-icon-precomposed_144x144',
+            'metatag_apple-touch-icon-precomposed_152x152',
+            'metatag_apple-touch-icon-precomposed_180x180',
+            'metatag_og:site_name',
+            'metatag_og:type',
+            'metatag_og:url',
+            'metatag_og:title',
+            'metatag_og:determiner',
+            'metatag_og:description',
+            'metatag_og:updated_time',
+            'metatag_og:see_also',
+            'metatag_og:image',
+            'metatag_og:image:url',
+            'metatag_og:image:secure_url',
+            'metatag_og:image:type',
+            'metatag_og:image:width',
+            'metatag_og:image:height',
+            'metatag_og:latitude',
+            'metatag_og:longitude',
+            'metatag_og:street_address',
+            'metatag_og:locality',
+            'metatag_og:region',
+            'metatag_og:postal_code',
+            'metatag_og:country_name',
+            'metatag_og:email',
+            'metatag_og:phone_number',
+            'metatag_og:fax_number',
+            'metatag_og:locale',
+            'metatag_og:locale:alternate',
+            'metatag_article:author',
+            'metatag_article:publisher',
+            'metatag_article:section',
+            'metatag_article:tag',
+            'metatag_article:published_time',
+            'metatag_article:modified_time',
+            'metatag_article:expiration_time',
+            'metatag_profile:first_name',
+            'metatag_profile:last_name',
+            'metatag_profile:username',
+            'metatag_profile:gender',
+            'metatag_og:audio',
+            'metatag_og:audio:secure_url',
+            'metatag_og:audio:type',
+            'metatag_book:author',
+            'metatag_book:isbn',
+            'metatag_book:release_date',
+            'metatag_book:tag',
+            'metatag_og:video:url',
+            'metatag_og:video:secure_url',
+            'metatag_og:video:width',
+            'metatag_og:video:height',
+            'metatag_og:video:type',
+            'metatag_video:actor',
+            'metatag_video:actor:role',
+            'metatag_video:director',
+            'metatag_video:writer',
+            'metatag_video:duration',
+            'metatag_video:release_date',
+            'metatag_video:tag',
+            'metatag_video:series',
+            'metatag_twitter:card',
+            'metatag_twitter:site',
+            'metatag_twitter:site:id',
+            'metatag_twitter:creator',
+            'metatag_twitter:creator:id',
+            'metatag_twitter:url',
+            'metatag_twitter:title',
+            'metatag_twitter:description',
+            'metatag_twitter:image',
+            'metatag_twitter:image:width',
+            'metatag_twitter:image:height',
+            'metatag_twitter:image:alt',
+            'metatag_twitter:image0',
+            'metatag_twitter:image1',
+            'metatag_twitter:image2',
+            'metatag_twitter:image3',
+            'metatag_twitter:player',
+            'metatag_twitter:player:width',
+            'metatag_twitter:player:height',
+            'metatag_twitter:player:stream',
+            'metatag_twitter:player:stream:content_type',
+            'metatag_twitter:app:country',
+            'metatag_twitter:app:name:iphone',
+            'metatag_twitter:app:id:iphone',
+            'metatag_twitter:app:url:iphone',
+            'metatag_twitter:app:name:ipad',
+            'metatag_twitter:app:id:ipad',
+            'metatag_twitter:app:url:ipad',
+            'metatag_twitter:app:name:googleplay',
+            'metatag_twitter:app:id:googleplay',
+            'metatag_twitter:app:url:googleplay',
+            'metatag_twitter:label1',
+            'metatag_twitter:data1',
+            'metatag_twitter:label2',
+            'metatag_twitter:data2',
+            'metatag_msvalidate.01',
+            'metatag_baidu-site-verification',
+            'metatag_google-site-verification',
+            'metatag_norton-safeweb-site-verification',
+            'metatag_p:domain_verify',
+            'metatag_yandex-verification',
+            'metatag_twitter:text:title',
+            'metatag_twitter:text:description',
+            'comment'
+        ));
+        //$this->addFieldMapping('field_blog_legacy_id');
+    }
+    /**
+     * @param stdClass $row
+     * @return bool
+     * Data manipulation before mapping
+     */
+    public function prepareRow($row) {
+        if (parent::prepareRow($row) === FALSE) {
+            return FALSE;
+        }
+
+        // Update links inside the body
+
+        $matches = [];
+        $pattern = "/<a(.*)href=\"([^\"]*)\"(.*)>/";
+        preg_match_all($pattern, $row->body, $matches);
+        if(count($matches[0])){
+            foreach($matches[0] as $i => $match){
+               $row->body = preg_replace($pattern, '<a$1href="#"$3>', $match);
+            }
+        }
+        $row->body = preg_replace($pattern, '<a$1href="#"$3>', $row->body);
+
+    }
+}
+

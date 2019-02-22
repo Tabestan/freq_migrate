@@ -1,0 +1,9 @@
+name = Freq_migrate
+description = WordPress to Frequency migration
+core = 7.x
+package = "CBS Migration"
+
+dependencies[] = migrate
+dependencies[] = migrate_ui (>=7.x-2.7)
+dependencies[] = wordpress_migrate
+dependencies[] = migrate_extras
